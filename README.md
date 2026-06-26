@@ -1,5 +1,5 @@
 # Real Time Driver State Detection
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)  ![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=for-the-badge&logo=opencv&logoColor=white) 
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)  ![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=for-the-badge&logo=opencv&logoColor=white)
 
 Real time, webcam based, driver attention state detection and monitoring using Python with the OpenCV and Mediapipe libraries.
 
@@ -72,7 +72,7 @@ The below image explains graphically how the Gaze Score for a single eye is comp
 
 ### Head Pose Estimation
 
-For the head pose estimation, a standard 3d head model in world coordinates was considered, in combination of the respective face mesh keypoints in the image plane. 
+For the head pose estimation, a standard 3d head model in world coordinates was considered, in combination of the respective face mesh keypoints in the image plane.
 In this way, using the solvePnP function of OpenCV, estimating the rotation and translation vector of the head in respect to the camera is possible.
 Then the 3 Euler angles are computed.
 
@@ -105,14 +105,23 @@ poetry shell
 ```
 
 Alternatively (not recommended), you can use the requirements.txt file provided in the repository using:
-    
+
     pip install -r requirements.txt
-    
+
+### Important
+
+The project depends on mediapipe version 0.10.13, which, in turn, depends on Python 3.12. The easiest way to get things working is with
+
+```
+conda create -n dms python=3.12
+conda activate dms
+pip install -r requirements.txt
+```
 
 ## Usage
 
 First navigate inside the driver state detection folder:
-    
+
     cd driver_state_detection
 
 The scripts can be used with all default options and parameters by calling it via command line:
