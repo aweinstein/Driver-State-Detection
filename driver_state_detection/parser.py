@@ -15,6 +15,13 @@ def get_args():
     )
 
     parser.add_argument(
+        "--video",
+        type=str,
+        default=None,
+        help="Path to a video file. If set, overrides --camera.",
+    )
+
+    parser.add_argument(
         "--camera_params",
         type=str,
         help="Path to the camera parameters file (JSON or YAML).",

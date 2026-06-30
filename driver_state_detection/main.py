@@ -76,17 +76,26 @@ def main():
         verbose=args.verbose,
     )
 
-    # capture the input from the default system camera (camera number 0)
-    cap = cv2.VideoCapture(args.camera)
+    # capture the input from the default system camera (camera number 0) or a video
+    source = args.video if args.video else args.camera
+    cap = cv2.VideoCapture(source)
     if not cap.isOpened():  # if the camera can't be opened exit the program
         print("Cannot open camera")
         exit()
 
+    if args.video:
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
+    if video_fps <= 0:
+        raise ValueError("Could not read FPS from video file.")
     # time.sleep(0.01)  # To prevent zero division error when calculating the FPS
 
     while True:  # infinite loop for webcam video capture
         # get current time in seconds
-        t_now = time.perf_counter()
+        if args.video:
+            frame_pos = cap.get(cv2.CAP_PROP_POS_FRAMES)
+            t_now = frame_pos / video_fps
+        else:
+            t_now = time.perf_counter()
 
         # Calculate the time taken to process the previous frame
         elapsed_time = t_now - prev_time
@@ -97,13 +106,19 @@ def main():
             fps = np.round(1 / elapsed_time, 3)
 
         ret, frame = cap.read()  # read a frame from the webcam
+        if not ret:
+            if args.video:
+                print("End of video file.")
+            else:
+                print("Can't receive frame from camera/stream end")
+            break
 
         if not ret:  # if a frame can't be read, exit the program
             print("Can't receive frame from camera/stream end")
             break
 
         # if the frame comes from webcam, flip it so it looks like a mirror.
-        if args.camera == 0:
+        if not args.video and args.camera == 0:
             frame = cv2.flip(frame, 2)
 
         # start the tick counter for computing the processing time for each frame
@@ -313,7 +328,8 @@ def main():
         cv2.imshow("Press 'q' to terminate", frame)
 
         # if the key "q" is pressed on the keyboard, the program is terminated
-        if cv2.waitKey(20) & 0xFF == ord("q"):
+        wait_ms = max(1, int(1000 / video_fps)) if args.video else 20
+        if cv2.waitKey(wait_ms) & 0xFF == ord("q"):
             break
 
     cap.release()
